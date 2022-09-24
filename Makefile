@@ -83,6 +83,19 @@ go-build-nodes:
 	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/nodes ./cmd/nodes
 
 # ---------------------------------------------------------
+# Transactionconsumer
+# ---------------------------------------------------------
+transactionconsumer: go-build-transactionconsumer start-transactionconsumer
+
+start-transactionconsumer:
+	@echo "  >  Starting transactionconsumer"
+	PROMETHEUS_SUBSYSTEM=transactionconsumer $(GOBIN)/transactionconsumer
+
+go-build-transactionconsumer:
+	@echo "  >  Building transactionconsumer binary..."
+	GOBIN=$(GOBIN) go build $(LDFLAGS) -o $(GOBIN)/transactionconsumer ./cmd/transactionconsumer
+
+# ---------------------------------------------------------
 # Code Checking
 # ---------------------------------------------------------
 check: fmt lint unit-test swag

@@ -25,12 +25,12 @@ type Prometheus struct {
 	responseStatus *prometheus.CounterVec
 	responseTime   *prometheus.HistogramVec
 
-	// Blockproducer metrics
+	// Block Producer metrics
 	lastFetchedBlock      *prometheus.GaugeVec
 	currentNodeBlock      *prometheus.GaugeVec
 	kafkaMessageSizeBytes *prometheus.GaugeVec
 
-	// Blockconsumer metrics
+	// Block Consumer metrics
 	topicPartitionOffset *prometheus.GaugeVec
 	topicLag             *prometheus.GaugeVec
 
@@ -38,6 +38,9 @@ type Prometheus struct {
 	nodeCurrentBlock *prometheus.GaugeVec
 	nodeLatency      *prometheus.GaugeVec
 	nodeStatus       *prometheus.GaugeVec
+
+	// Transaction Consumer metrics
+	parsedTxs *prometheus.GaugeVec
 }
 
 // NewPrometheus return an instance of Prometheus with registered metrics.

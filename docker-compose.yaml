@@ -12,6 +12,7 @@ services:
     environment:
       - PROMETHEUS_SUBSYSTEM=api
       - DATABASE_URL=postgresql://user:password@postgres:5432/postgres?sslmode=disable
+      - RABBITMQ_URL=amqp://rabbit:5672
     depends_on:
       - postgres
       - prometheus
@@ -32,6 +33,7 @@ services:
       - KAFKA_BROKERS=kafka:9092
     depends_on:
       - postgres
+      - rabbit
       - zookeeper
       - kafka
       - prometheus
@@ -48,12 +50,11 @@ services:
     environment:
       - PROMETHEUS_SUBSYSTEM=blockconsumer
       - PROMETHEUS_PUSHGATEWAY_URL=pushgateway:9091
-      - DATABASE_URL=postgresql://user:password@postgres:5432/postgres?sslmode=disable
+      - RABBITMQ_URL=amqp://rabbit:5672
       - KAFKA_BROKERS=kafka:9092
     depends_on:
       - postgres
-      - zookeeper
-      - kafka
+      - rabbit
       - prometheus
       - grafana
       - pushgateway
@@ -77,6 +78,25 @@ services:
     restart: unless-stopped
     command: make start-nodes
 
+  transactionconsumer:
+    container_name: transactionconsumer
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile_transactionconsumer
+    environment:
+      - PROMETHEUS_SUBSYSTEM=notransactionconsumerdes
+      - PROMETHEUS_PUSHGATEWAY_URL=pushgateway:9091
+      - DATABASE_URL=postgresql://user:password@postgres:5432/postgres?sslmode=disable
+      - RABBITMQ_URL=amqp://rabbit:5672
+    depends_on:
+      - postgres
+      - rabbit
+      - prometheus
+      - grafana
+      - pushgateway
+    restart: unless-stopped
+    command: make start-transactionconsumer
+
   postgres:
     container_name: postgres
     image: postgres:11
@@ -88,16 +108,27 @@ services:
     ports:
       - ${POSTGRES_PORT:-5432}:5432
 
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:management
+    restart: unless-stopped
+    ports:
+      - 5672:5672
+      - 15672:15672
+
   zookeeper:
-    hostname: zookeeper
+    container_name: zookeeper
     image: wurstmeister/zookeeper:3.4.6
+    restart: unless-stopped
     expose:
       - "2181"
     ports:
       - "2181:2181"
 
   kafka:
+    container_name: kafka
     image: wurstmeister/kafka
+    restart: unless-stopped
     env_file:
       - configs/kafka/variables.env
     depends_on:
@@ -110,6 +141,7 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
+    restart: unless-stopped
     ports:
       - 9090:9090
     volumes:
@@ -118,6 +150,7 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
+    restart: unless-stopped
     ports:
       - 3000:3000
     volumes:
@@ -127,5 +160,6 @@ services:
   pushgateway:
     container_name: pushgateway
     image: prom/pushgateway:latest
+    restart: unless-stopped
     ports:
       - 9091:9091

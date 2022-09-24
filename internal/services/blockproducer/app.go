@@ -26,7 +26,10 @@ type App struct {
 }
 
 func NewApp() *App {
-	services.Setup()
+	services.InitConfig()
+	services.InitLogging()
+	services.InitSentry()
+	services.InitDatabase()
 
 	db, err := postgres.New(config.Default.Database.URL, config.Default.Database.Log)
 	if err != nil {
@@ -35,21 +38,8 @@ func NewApp() *App {
 
 	platforms := platform.InitPlatforms()
 
-	if err := initBlockTrackers(context.Background(), db, platforms); err != nil {
+	if err = initBlockTrackers(context.Background(), db, platforms); err != nil {
 		log.WithError(err).Warn("Block trackers init error")
-	}
-
-	prometheus := prometheus.NewPrometheus(config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem)
-	prometheus.RegisterBlocksProducerMetrics()
-
-	metricsPusher, err2 := metrics.InitDefaultMetricsPusher(
-		config.Default.Prometheus.PushGateway.URL,
-		config.Default.Prometheus.PushGateway.Key,
-		fmt.Sprintf("%s_%s", config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem),
-		config.Default.Prometheus.PushGateway.PushInterval,
-	)
-	if err2 != nil {
-		log.WithError(err2).Warn("Metrics pusher init error")
 	}
 
 	kafka := kafka.NewWriter(kafka.WriterConfig{
@@ -60,6 +50,19 @@ func NewApp() *App {
 		Logger:       log.New(),
 	})
 	kafka.AllowAutoTopicCreation = true
+
+	prometheus := prometheus.NewPrometheus(config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem)
+	prometheus.RegisterBlocksProducerMetrics()
+
+	metricsPusher, err := metrics.InitDefaultMetricsPusher(
+		config.Default.Prometheus.PushGateway.URL,
+		config.Default.Prometheus.PushGateway.Key,
+		fmt.Sprintf("%s_%s", config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem),
+		config.Default.Prometheus.PushGateway.PushInterval,
+	)
+	if err != nil {
+		log.WithError(err).Warn("Metrics pusher init error")
+	}
 
 	workers := make([]worker.Worker, 0, len(platforms))
 	for _, pl := range platforms {
@@ -74,12 +77,12 @@ func NewApp() *App {
 
 func (a *App) Run(ctx context.Context) {
 	service.RunWithGracefulShutdown(ctx, func(ctx context.Context, wg *sync.WaitGroup) {
-		for _, worker := range a.workers {
-			go worker.Start(ctx, wg)
-		}
-
 		if a.metricsPusher != nil {
 			a.metricsPusher.Start(ctx, wg)
+		}
+
+		for _, worker := range a.workers {
+			go worker.Start(ctx, wg)
 		}
 	})
 }

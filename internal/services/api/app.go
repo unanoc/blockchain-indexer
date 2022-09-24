@@ -19,7 +19,11 @@ type App struct {
 }
 
 func NewApp() *App {
-	services.Setup()
+	services.InitConfig()
+	services.InitLogging()
+	services.InitSentry()
+	services.InitDatabase()
+	services.InitSwaggerInfo()
 
 	db, err := postgres.New(config.Default.Database.URL, config.Default.Database.Log)
 	if err != nil {

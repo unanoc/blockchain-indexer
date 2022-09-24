@@ -83,6 +83,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.34
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.12.0
+	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.0
 	github.com/swaggo/files v0.0.0-20220728132757-551d4a08d97a
 	github.com/swaggo/gin-swagger v1.5.3

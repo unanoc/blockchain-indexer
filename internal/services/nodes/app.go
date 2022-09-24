@@ -22,7 +22,10 @@ type App struct {
 }
 
 func NewApp() *App {
-	services.Setup()
+	services.InitConfig()
+	services.InitLogging()
+	services.InitSentry()
+	services.InitDatabase()
 
 	db, err := postgres.New(config.Default.Database.URL, config.Default.Database.Log)
 	if err != nil {
@@ -32,14 +35,14 @@ func NewApp() *App {
 	prometheus := prometheus.NewPrometheus(config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem)
 	prometheus.RegisterNodesMetrics()
 
-	metricsPusher, err2 := metrics.InitDefaultMetricsPusher(
+	metricsPusher, err := metrics.InitDefaultMetricsPusher(
 		config.Default.Prometheus.PushGateway.URL,
 		config.Default.Prometheus.PushGateway.Key,
 		fmt.Sprintf("%s_%s", config.Default.Prometheus.NameSpace, config.Default.Prometheus.SubSystem),
 		config.Default.Prometheus.PushGateway.PushInterval,
 	)
-	if err2 != nil {
-		log.WithError(err2).Warn("Metrics pusher init error")
+	if err != nil {
+		log.WithError(err).Warn("Metrics pusher init error")
 	}
 
 	checker := NewWorker(db, prometheus)
@@ -58,10 +61,10 @@ func NewApp() *App {
 
 func (a *App) Run(ctx context.Context) {
 	service.RunWithGracefulShutdown(ctx, func(ctx context.Context, wg *sync.WaitGroup) {
-		a.checker.Start(ctx, wg)
-
 		if a.metricsPusher != nil {
 			a.metricsPusher.Start(ctx, wg)
 		}
+
+		a.checker.Start(ctx, wg)
 	})
 }

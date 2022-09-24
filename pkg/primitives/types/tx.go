@@ -31,6 +31,7 @@ type (
 
 	Tx struct {
 		Hash           string          `json:"hash" bson:"hash"`
+		Chain          string          `json:"chain" bson:"chain"`
 		From           string          `json:"from" bson:"from"`
 		To             string          `json:"to" bson:"to"`
 		BlockCreatedAt int64           `json:"block_created_at" bson:"block_created_at"`

@@ -7,20 +7,14 @@ import (
 
 	"github.com/unanoc/blockchain-indexer/docs"
 	"github.com/unanoc/blockchain-indexer/internal/config"
+	"github.com/unanoc/blockchain-indexer/internal/rabbit"
 	"github.com/unanoc/blockchain-indexer/internal/repository/postgres"
+	"github.com/unanoc/blockchain-indexer/pkg/mq"
 	"github.com/unanoc/blockchain-indexer/pkg/sentry"
 	"github.com/unanoc/blockchain-indexer/pkg/viper"
 )
 
 const defaultConfigPath = "config.yml"
-
-func Setup() {
-	InitConfig()
-	InitLogging()
-	InitSentry()
-	InitDatabase()
-	InitSwaggerInfo()
-}
 
 func InitConfig() {
 	path := os.Getenv("CONFIG_PATH")
@@ -57,6 +51,36 @@ func InitDatabase() {
 
 	if err := postgres.Setup(db); err != nil {
 		log.WithError(err).Fatal("Database setup error")
+	}
+}
+
+func InitRabbitMQ() {
+	rabbitmq, err := mq.Connect(config.Default.RabbitMQ.URL)
+	if err != nil {
+		log.WithError(err).Fatal("RabbitMQ init error")
+	}
+
+	txsExchange := rabbitmq.InitExchange(rabbit.ExchangeTransactionsParsed)
+
+	if err = txsExchange.Declare("fanout"); err != nil {
+		log.WithError(err).Fatal("Exchange declare error")
+	}
+
+	queues := map[mq.QueueName]mq.Queue{
+		rabbit.QueueTransactionsSave: rabbitmq.InitQueue(rabbit.QueueTransactionsSave),
+	}
+
+	for _, queue := range queues {
+		if err = queue.Declare(); err != nil {
+			log.WithError(err).WithField("queue", queue.Name()).Fatal("Queue declare error")
+		}
+	}
+
+	err = txsExchange.Bind([]mq.Queue{
+		queues[rabbit.QueueTransactionsSave],
+	})
+	if err != nil {
+		log.WithError(err).Fatal("Exchange bind error")
 	}
 }
 

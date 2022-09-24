@@ -97,6 +97,7 @@ func (p *Platform) normalizeTx(srcTx TxResponse) (tx types.Tx, err error) {
 
 	tx = types.Tx{
 		Hash:           srcTx.TxHash,
+		Chain:          p.Coin().Handle,
 		BlockCreatedAt: date.Unix(),
 		Status:         status,
 		Block:          block,

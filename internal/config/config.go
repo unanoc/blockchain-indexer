@@ -30,6 +30,10 @@ type Config struct {
 		Log bool   `mapstructure:"log"`
 	} `mapstructure:"database"`
 
+	RabbitMQ struct {
+		URL string `mapstructure:"url"`
+	} `mapstructure:"rabbitmq"`
+
 	Kafka struct {
 		Brokers           string        `mapstructure:"brokers"`
 		BlocksTopicPrefix string        `mapstructure:"blocks_topic_prefix"`
@@ -65,6 +69,10 @@ type Config struct {
 		Interval  time.Duration `mapstructure:"interval"`
 		InitNodes bool          `mapstructure:"init_nodes"`
 	} `mapstructure:"nodes"`
+
+	TransactionConsumer struct {
+		Workers int `mapstructure:"workers"`
+	} `mapstructure:"transaction_consumer"`
 
 	Platforms struct {
 		Smartchain struct {

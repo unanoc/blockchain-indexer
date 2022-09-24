@@ -16,6 +16,9 @@ database:
   url: postgresql://user:password@localhost:5432/postgres?sslmode=disable
   log: false
 
+rabbitmq:
+  url: amqp://localhost:5672
+
 kafka:
   brokers: localhost:9092
   blocks_topic_prefix: blocks-topic-
@@ -46,6 +49,9 @@ block_consumer:
 nodes:
   interval: 1m
   init_nodes: true
+
+transaction_consumer:
+  workers: 2
 
 platforms:
   smartchain:

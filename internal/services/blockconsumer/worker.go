@@ -2,6 +2,7 @@ package blockconsumer
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/segmentio/kafka-go"
@@ -9,8 +10,8 @@ import (
 
 	"github.com/unanoc/blockchain-indexer/internal/config"
 	"github.com/unanoc/blockchain-indexer/internal/prometheus"
-	"github.com/unanoc/blockchain-indexer/internal/repository/models"
-	"github.com/unanoc/blockchain-indexer/internal/repository/postgres"
+	"github.com/unanoc/blockchain-indexer/pkg/mq"
+	"github.com/unanoc/blockchain-indexer/pkg/primitives/types"
 	"github.com/unanoc/blockchain-indexer/pkg/worker"
 	"github.com/unanoc/blockchain-indexer/platform"
 )
@@ -20,14 +21,14 @@ const (
 )
 
 type Worker struct {
-	log        *log.Entry
-	db         *postgres.Database
-	kafka      *kafka.Reader
-	prometheus *prometheus.Prometheus
-	API        platform.Platform
+	log         *log.Entry
+	kafka       *kafka.Reader
+	prometheus  *prometheus.Prometheus
+	API         platform.Platform
+	txsExchange mq.Exchange
 }
 
-func NewWorker(db *postgres.Database, kafka *kafka.Reader,
+func NewWorker(txsExchange mq.Exchange, kafka *kafka.Reader,
 	p *prometheus.Prometheus, pl platform.Platform,
 ) worker.Worker {
 	w := &Worker{
@@ -35,10 +36,10 @@ func NewWorker(db *postgres.Database, kafka *kafka.Reader,
 			"worker": workerName,
 			"chain":  pl.Coin().Handle,
 		}),
-		db:         db,
-		kafka:      kafka,
-		prometheus: p,
-		API:        pl,
+		txsExchange: txsExchange,
+		kafka:       kafka,
+		prometheus:  p,
+		API:         pl,
 	}
 
 	opts := &worker.Options{
@@ -65,14 +66,8 @@ func (w *Worker) run(ctx context.Context) error {
 		return fmt.Errorf("failed to normalize raw block: %w", err)
 	}
 
-	// txs.CleanMemos()
-	normalizedTxs, err := models.NormalizeTransactions(txs, chain)
-	if err != nil {
-		return fmt.Errorf("failed to normalized txs: %w", err)
-	}
-
-	if err = w.db.InsertTransactions(ctx, normalizedTxs); err != nil {
-		return fmt.Errorf("failed to insert txs: %w", err)
+	if err = w.publishToExchange(txs); err != nil {
+		return fmt.Errorf("failed to publish to exchange: %w", err)
 	}
 
 	if err = w.kafka.CommitMessages(ctx, message); err != nil {
@@ -88,6 +83,29 @@ func (w *Worker) run(ctx context.Context) error {
 		"partition": message.Partition,
 		"offset":    message.Offset,
 	}).Info("Transactions have been consumed")
+
+	return nil
+}
+
+func (w *Worker) publishToExchange(txs types.Txs) error {
+	if len(txs) == 0 {
+		return nil
+	}
+
+	logFields := log.Fields{"chain": w.API.Coin().Handle, "txs": txs[:1]}
+
+	body, err := json.Marshal(txs)
+	if err != nil {
+		log.WithFields(logFields).Error(err)
+
+		return fmt.Errorf("failed to marshal json: %w", err)
+	}
+
+	if err = w.txsExchange.Publish(body); err != nil {
+		log.WithFields(logFields).Error(err)
+
+		return fmt.Errorf("failed to publish txs to rabbit exchange: %w", err)
+	}
 
 	return nil
 }

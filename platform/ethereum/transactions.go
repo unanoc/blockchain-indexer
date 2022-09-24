@@ -96,6 +96,7 @@ func (p *Platform) normalizeBaseOfTx(srcTx Transaction,
 
 	tx := &types.Tx{
 		Hash:           srcTx.Hash,
+		Chain:          p.Coin().Handle,
 		From:           addressFrom,
 		To:             addressTo,
 		BlockCreatedAt: timestamp,
