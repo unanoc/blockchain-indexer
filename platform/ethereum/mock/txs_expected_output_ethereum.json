@@ -1,6 +1,7 @@
 [
   {
     "hash": "0x6fc584cb97e0963c9d0f1041443be32bae3133bd49a9d605b33d22961bdc6581",
+    "chain": "ethereum",
     "from": "0xd1269868031C5BD09B10290359c6Bd05Ee01E48b",
     "to": "0x7Be8076f4EA4A4AD08075C2508e481d6C946D12b",
     "block_created_at": 1621950566,
@@ -20,6 +21,7 @@
   },
   {
     "hash": "0x3a06a7a80ae997f9399b90269b1e7651ea45c0baab868a17a7c6c593f169a784",
+    "chain": "ethereum",
     "from": "0x0000000000000000000000000000000000000000",
     "to": "0xF87229252212b3945cfBbD1C778a9E0A4b578058",
     "block_created_at": 1621950566,
@@ -38,6 +40,7 @@
   },
   {
     "hash": "0x02a2f92eaeb5d331e8ff1596b6a171ecbd7c26620c45f880851422fb38c6d1fd",
+    "chain": "ethereum",
     "from": "0x4E48191DbCd0Ebe2415bae3e13C23e8E71f4dB76",
     "to": "0x5F35c99aCE9EA1B96d88158D384063192bb5c024",
     "block_created_at": 1621950566,

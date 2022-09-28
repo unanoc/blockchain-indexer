@@ -1,6 +1,7 @@
 [
   {
     "hash": "0xa1a2679decfb11b5f7cc30e4aac91beef7c443f17dd511fe9fd9ec4f9257da3a",
+    "chain": "smartchain",
     "from": "0xD3B6FD963B6F1B9d2bDD934908c85F57Cc7b4a0b",
     "to": "0x56a70c991713bA6906eE0cc68ccD753cbE2Ad99F",
     "block_created_at": 1621950566,

@@ -1,6 +1,7 @@
 [
   {
     "hash": "F828A72A7CD46D35FCADBE64C870AEFD10021C6E55975E8AC3F916E6624C1DCA",
+    "chain": "cosmos",
     "from": "cosmos12088f4cr8lxrlyqmgynt68mj57ejgg58s8z3tv",
     "to": "cosmosvaloper1ey69r37gfxvxg62sh4r0ktpuc46pzjrm873ae8",
     "block_created_at": 1636103152,
