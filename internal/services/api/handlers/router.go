@@ -44,4 +44,6 @@ func NewRouter(db repository.Storage, p *prometheus.Prometheus) http.Handler {
 
 func (api *TransactionsAPI) Setup(router *gin.Engine) {
 	router.GET("/api/v1/transactions", api.GetTransactions)
+	router.GET("/api/v1/transactions/:hash", api.GetTransactionByHash)
+	router.GET("/api/v1/transactions/user", api.GetTransactionsByUser)
 }

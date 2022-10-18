@@ -7,10 +7,53 @@ definitions:
       message:
         type: string
     type: object
-  transactions.GetTransactionsResp:
+  transactions.Tx:
+    properties:
+      chain:
+        type: string
+      data: {}
+      fee:
+        type: string
+      from:
+        type: string
+      hash:
+        type: string
+      height:
+        type: integer
+      sequence:
+        type: integer
+      status:
+        type: string
+      timestamp:
+        type: integer
+      to:
+        type: string
+      type:
+        type: string
+    type: object
+  transactions.TxResp:
     properties:
       status_code:
         type: integer
+      tx:
+        $ref: '#/definitions/transactions.Tx'
+    type: object
+  transactions.TxsResp:
+    properties:
+      limit:
+        type: integer
+      page_number:
+        type: integer
+      status_code:
+        type: integer
+      total_count:
+        type: integer
+      total_pages:
+        type: integer
+      txs:
+        items:
+          $ref: '#/definitions/transactions.Tx'
+        type: array
     type: object
 info:
   contact:
@@ -24,14 +67,114 @@ info:
 paths:
   /api/v1/transactions:
     get:
-      description: Returns transactions
+      description: Returns all transaction list by creation date order(asc/desc)
+      parameters:
+      - description: Chain
+        in: query
+        name: chain
+        required: true
+        type: string
+      - description: Page for pagination
+        in: query
+        name: page
+        type: integer
+      - description: The limit of the number of items
+        in: query
+        name: limit
+        type: integer
+      - description: Enable desc order
+        in: query
+        name: recent
+        type: boolean
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/transactions.GetTransactionsResp'
+            $ref: '#/definitions/transactions.TxsResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httperr.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httperr.Error'
+      tags:
+      - Transactions
+  /api/v1/transactions/{hash}:
+    get:
+      description: Returns transaction details by hash
+      parameters:
+      - description: Chain
+        in: query
+        name: chain
+        required: true
+        type: string
+      - description: Transaction hash
+        in: path
+        name: hash
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/transactions.TxResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httperr.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/httperr.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/httperr.Error'
+      tags:
+      - Transactions
+  /api/v1/transactions/user:
+    get:
+      description: Returns all user transaction list by creation date order(asc/desc)
+      parameters:
+      - description: Chain
+        in: query
+        name: chain
+        required: true
+        type: string
+      - description: Address that made transactions
+        in: query
+        name: address
+        required: true
+        type: string
+      - description: Page for pagination
+        in: query
+        name: page
+        type: integer
+      - description: The limit of the number of items
+        in: query
+        name: limit
+        type: integer
+      - description: Enable desc order
+        in: query
+        name: recent
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/transactions.TxsResp'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/httperr.Error'
         "500":
           description: Internal Server Error
           schema:
