@@ -10,6 +10,31 @@ import (
 
 //nolint:gochecknoglobals
 var nodesList = map[string][]models.Node{
+	"binance": {
+		{
+			Chain:      "binance",
+			Scheme:     "https",
+			Host:       "dex.binance.org",
+			Enabled:    true,
+			Monitoring: true,
+		},
+	},
+	"cosmos": {
+		{
+			Chain:      "cosmos",
+			Scheme:     "https",
+			Host:       "us-atom-restapi.binancechain.io",
+			Enabled:    true,
+			Monitoring: true,
+		},
+		{
+			Chain:      "cosmos",
+			Scheme:     "https",
+			Host:       "cosmos-mainnet-rpc.allthatnode.com:1317",
+			Enabled:    true,
+			Monitoring: true,
+		},
+	},
 	"smartchain": {
 		{
 			Chain:      "smartchain",
@@ -45,36 +70,6 @@ var nodesList = map[string][]models.Node{
 			Chain:      "ethereum",
 			Scheme:     "https",
 			Host:       "ethereum-mainnet-rpc.allthatnode.com",
-			Enabled:    true,
-			Monitoring: true,
-		},
-		{
-			Chain:      "ethereum",
-			Scheme:     "https",
-			Host:       "ethereum-rinkeby-rpc.allthatnode.com",
-			Enabled:    true,
-			Monitoring: true,
-		},
-		{
-			Chain:      "ethereum",
-			Scheme:     "https",
-			Host:       "ethereum-ropsten-rpc.allthatnode.comm",
-			Enabled:    true,
-			Monitoring: true,
-		},
-	},
-	"cosmos": {
-		{
-			Chain:      "cosmos",
-			Scheme:     "https",
-			Host:       "us-atom-restapi.binancechain.io",
-			Enabled:    true,
-			Monitoring: true,
-		},
-		{
-			Chain:      "cosmos",
-			Scheme:     "https",
-			Host:       "cosmos-mainnet-rpc.allthatnode.com:1317",
 			Enabled:    true,
 			Monitoring: true,
 		},

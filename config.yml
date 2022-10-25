@@ -55,9 +55,12 @@ transaction_consumer:
   workers: 2
 
 platforms:
+  binance:
+    node: https://api.binance.org/bc
+    dex: https://dex.binance.org
+  cosmos:
+    node: https://us-atom-restapi.binancechain.io
   ethereum:
     node: https://ethereum-mainnet-rpc.allthatnode.com
   smartchain:
     node: https://bsc-dataseed1.binance.org
-  cosmos:
-    node: https://us-atom-restapi.binancechain.io
