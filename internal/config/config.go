@@ -76,14 +76,21 @@ type Config struct {
 	} `mapstructure:"transaction_consumer"`
 
 	Platforms struct {
+		Binance struct {
+			Node string `mapstructure:"node"`
+			Dex  string `mapstructure:"dex"`
+		} `mapstructure:"binance"`
+		Bitcoin struct {
+			Node string `mapstructure:"node"`
+		} `mapstructure:"bitcoin"`
+		Cosmos struct {
+			Node string `mapstructure:"node"`
+		} `mapstructure:"cosmos"`
 		Ethereum struct {
 			Node string `mapstructure:"node"`
 		} `mapstructure:"ethereum"`
 		Smartchain struct {
 			Node string `mapstructure:"node"`
 		} `mapstructure:"smartchain"`
-		Cosmos struct {
-			Node string `mapstructure:"node"`
-		} `mapstructure:"cosmos"`
 	} `mapstructure:"platforms"`
 }

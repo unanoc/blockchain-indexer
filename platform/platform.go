@@ -4,6 +4,8 @@ import (
 	"github.com/unanoc/blockchain-indexer/internal/config"
 	"github.com/unanoc/blockchain-indexer/pkg/primitives/coin"
 	"github.com/unanoc/blockchain-indexer/pkg/primitives/types"
+	"github.com/unanoc/blockchain-indexer/platform/binance"
+	"github.com/unanoc/blockchain-indexer/platform/bitcoin"
 	"github.com/unanoc/blockchain-indexer/platform/cosmos"
 	"github.com/unanoc/blockchain-indexer/platform/ethereum"
 )
@@ -23,21 +25,28 @@ type (
 
 func InitPlatforms() Platforms {
 	return Platforms{
+		coin.Binance().Handle: binance.Init(coin.BINANCE, config.Default.Platforms.Binance.Node,
+			config.Default.Platforms.Binance.Dex),
+		coin.Bitcoin().Handle:    bitcoin.Init(coin.BITCOIN, config.Default.Platforms.Bitcoin.Node),
+		coin.Cosmos().Handle:     cosmos.Init(coin.COSMOS, cosmos.DenomAtom, config.Default.Platforms.Cosmos.Node),
 		coin.Ethereum().Handle:   ethereum.Init(coin.ETHEREUM, config.Default.Platforms.Ethereum.Node),
 		coin.Smartchain().Handle: ethereum.Init(coin.SMARTCHAIN, config.Default.Platforms.Smartchain.Node),
-		coin.Cosmos().Handle:     cosmos.Init(coin.COSMOS, cosmos.DenomAtom, config.Default.Platforms.Cosmos.Node),
 	}
 }
 
 //nolint:gofumpt
 func GetPlatform(chain string, url string) Platform {
 	switch chain {
+	case coin.Binance().Handle:
+		return binance.Init(coin.BINANCE, "", url)
+	case coin.Bitcoin().Handle:
+		return bitcoin.Init(coin.BITCOIN, url)
+	case coin.Cosmos().Handle:
+		return cosmos.Init(coin.COSMOS, cosmos.DenomAtom, url)
 	case coin.Ethereum().Handle:
 		return ethereum.Init(coin.ETHEREUM, url)
 	case coin.Smartchain().Handle:
 		return ethereum.Init(coin.SMARTCHAIN, url)
-	case coin.Cosmos().Handle:
-		return cosmos.Init(coin.COSMOS, cosmos.DenomAtom, url)
 	default:
 		return nil
 	}
