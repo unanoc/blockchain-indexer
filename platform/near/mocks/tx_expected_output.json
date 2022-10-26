@@ -1,0 +1,21 @@
+[
+  {
+    "hash": "GFJKKgvXjtD2YcihqaDTsMshepcVcJanspJQDkRezdPX",
+    "chain": "near",
+    "from": "f6abe5ce1612958c86de6a210c0ba30688565c59364bf6beb391c4aa782e9b24",
+    "to": "be6cafb25e17f35b79930b143d7fec2e60483ef1e3b41ffd38fc0d92d1426869",
+    "block_created_at": 0,
+    "block": 38341899,
+    "status": "success",
+    "sequence": 1,
+    "type": "transfer",
+    "fee": {
+      "asset": "c397",
+      "amount": "0"
+    },
+    "metadata": {
+      "asset": "c397",
+      "amount": "4981620000000000000000000"
+    }
+  }
+]

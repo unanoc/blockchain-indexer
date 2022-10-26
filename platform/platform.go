@@ -7,6 +7,7 @@ import (
 	"github.com/unanoc/blockchain-indexer/platform/binance"
 	"github.com/unanoc/blockchain-indexer/platform/cosmos"
 	"github.com/unanoc/blockchain-indexer/platform/ethereum"
+	"github.com/unanoc/blockchain-indexer/platform/near"
 )
 
 type (
@@ -29,6 +30,7 @@ func InitPlatforms() Platforms {
 		coin.Cosmos().Handle:     cosmos.Init(coin.COSMOS, cosmos.DenomAtom, config.Default.Platforms.Cosmos.Node),
 		coin.Ethereum().Handle:   ethereum.Init(coin.ETHEREUM, config.Default.Platforms.Ethereum.Node),
 		coin.Smartchain().Handle: ethereum.Init(coin.SMARTCHAIN, config.Default.Platforms.Smartchain.Node),
+		coin.Near().Handle:       near.Init(coin.NEAR, config.Default.Platforms.Near.Node),
 	}
 }
 
@@ -43,6 +45,8 @@ func GetPlatform(chain string, url string) Platform {
 		return ethereum.Init(coin.ETHEREUM, url)
 	case coin.Smartchain().Handle:
 		return ethereum.Init(coin.SMARTCHAIN, url)
+	case coin.Near().Handle:
+		return near.Init(coin.NEAR, url)
 	default:
 		return nil
 	}

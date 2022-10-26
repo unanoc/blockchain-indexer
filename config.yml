@@ -66,3 +66,5 @@ platforms:
     node: https://ethereum-mainnet-rpc.allthatnode.com
   smartchain:
     node: https://bsc-dataseed1.binance.org
+  near:
+    node: https://rpc.mainnet.near.org

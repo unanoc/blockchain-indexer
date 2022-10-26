@@ -35,6 +35,15 @@ var nodesList = map[string][]models.Node{
 			Monitoring: true,
 		},
 	},
+	"ethereum": {
+		{
+			Chain:      "ethereum",
+			Scheme:     "https",
+			Host:       "ethereum-mainnet-rpc.allthatnode.com",
+			Enabled:    true,
+			Monitoring: true,
+		},
+	},
 	"smartchain": {
 		{
 			Chain:      "smartchain",
@@ -65,11 +74,11 @@ var nodesList = map[string][]models.Node{
 			Monitoring: true,
 		},
 	},
-	"ethereum": {
+	"near": {
 		{
-			Chain:      "ethereum",
+			Chain:      "near",
 			Scheme:     "https",
-			Host:       "ethereum-mainnet-rpc.allthatnode.com",
+			Host:       "rpc.mainnet.near.org",
 			Enabled:    true,
 			Monitoring: true,
 		},

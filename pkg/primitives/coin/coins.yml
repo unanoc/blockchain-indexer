@@ -46,3 +46,11 @@
   decimals: 18
   blockTime: 3000
   blockchain: Ethereum
+
+- id: 397
+  symbol: NEAR
+  handle: near
+  name: NEAR
+  decimals: 24
+  blockTime: 2000
+  blockchain: Near

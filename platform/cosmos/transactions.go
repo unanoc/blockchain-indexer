@@ -36,7 +36,10 @@ func (p *Platform) NormalizeBlock(block TxPage) types.Txs {
 
 		normalizedTx, err := p.normalizeTx(srcTx)
 		if err != nil {
-			log.WithError(err).WithField("tx_id", srcTx.TxHash).Debug("Cannot normalize transaction")
+			log.WithError(err).WithFields(log.Fields{
+				"tx_id": srcTx.TxHash,
+				"chain": p.Coin().Handle,
+			}).Debug("Cannot normalize transaction")
 
 			continue
 		}

@@ -91,5 +91,8 @@ type Config struct {
 		Smartchain struct {
 			Node string `mapstructure:"node"`
 		} `mapstructure:"smartchain"`
+		Near struct {
+			Node string `mapstructure:"node"`
+		} `mapstructure:"near"`
 	} `mapstructure:"platforms"`
 }
