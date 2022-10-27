@@ -90,14 +90,14 @@ linters:
     - prealloc
     - predeclared
     - revive
-    - rowserrcheck
-    - sqlclosecheck
+    # - rowserrcheck
+    # - sqlclosecheck
     - stylecheck
     - testpackage
     - thelper
     - tparallel
     - unconvert
     - unparam
-    - wastedassign
+    # - wastedassign
     - whitespace
     - wrapcheck
