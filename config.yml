@@ -39,7 +39,7 @@ prometheus:
 
 block_producer:
   interval: 10ms
-  backoff_interval: 10s
+  backoff_interval: 5s
   fetch_blocks_max: 10
   start_from_last_block: true
 
